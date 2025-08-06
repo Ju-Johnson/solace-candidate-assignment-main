@@ -29,7 +29,10 @@ export default function Home() {
 	const onChange = (e) => {
 		const searchTerm = e.target.value;
 
-		document.getElementById('search-term').innerHTML = searchTerm;
+		const searchTermElement = document.getElementById('search-term');
+		if (searchTermElement) {
+			searchTermElement.innerHTML = searchTerm;
+		}
 
 		console.log('filtering advocates...');
 		const filteredAdvocates = advocates.filter((advocate) => {
@@ -71,26 +74,27 @@ export default function Home() {
 			<br />
 			<table>
 				<thead>
-					<th>First Name</th>
-					<th>Last Name</th>
-					<th>City</th>
-					<th>Degree</th>
-					<th>Specialties</th>
-					<th>Years of Experience</th>
-					<th>Phone Number</th>
+          <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>City</th>
+            <th>Degree</th>
+            <th>Specialties</th>
+            <th>Years of Experience</th>
+            <th>Phone Number</th>
+          </tr>
 				</thead>
 				<tbody>
-					{filteredAdvocates.map((advocate, idx) => {
+					{filteredAdvocates.map((advocate, index) => {
 						return (
-							<tr
-								key={`${advocate.firstName}-${advocate.lastName}-${idx}`}>
+							<tr key={`${advocate.firstName}-${advocate.lastName}-${index}`}>
 								<td>{advocate.firstName}</td>
 								<td>{advocate.lastName}</td>
 								<td>{advocate.city}</td>
 								<td>{advocate.degree}</td>
 								<td>
-									{advocate.specialties.map((s, sIdx) => (
-										<div key={sIdx}>{s}</div>
+									{advocate.specialties.map((specialty, index) => (
+										<div key={index}>{specialty}</div>
 									))}
 								</td>
 								<td>{advocate.yearsOfExperience}</td>
