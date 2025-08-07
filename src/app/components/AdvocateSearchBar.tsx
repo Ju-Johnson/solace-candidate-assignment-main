@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import { Box } from '@mui/material';
 
 type AdvocateSearchBarProps = {
 	onChange: (value: string) => void;
@@ -16,25 +19,41 @@ export default function AdvocateSearchBar({ onChange, onReset }: AdvocateSearchB
             setSearchTerm(searchValue);
             onChange(searchValue);
         } else {
-            setSearchTerm('');
-            onReset();
+			handleClearInput();
         }
     };
 
+	const handleClearInput = () => {
+		setSearchTerm('');
+		onReset();
+	};
+
 	return (
-		<div>
-			<label htmlFor='search-input'>Filtered Search</label>
-			<br />
-			<input
-				style={{ border: '1px solid black' }}
+		<Box
+			sx={{
+				display: 'flex',
+				gap: 2,
+				alignItems: 'center',
+				marginTop: 5,
+			}}>
+			<TextField
 				id='search-input'
+				label='Filter Search'
 				type='text'
 				name='search-input'
+				variant='outlined'
 				placeholder='Searching for...'
+				size='small'
 				value={searchTerm}
 				onChange={handleInputChange}
 			/>
-			<button onClick={onReset}>Clear</button>
-		</div>
+			<Button
+				variant='outlined'
+				color='primary'
+				size='medium'
+				onClick={handleClearInput}>
+				Clear
+			</Button>
+		</Box>
 	);
 }
