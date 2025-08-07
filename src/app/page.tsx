@@ -1,16 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-
-type Advocate = {
-	firstName: string;
-	lastName: string;
-	city: string;
-	degree: string;
-	specialties: string[];
-	yearsOfExperience: number;
-	phoneNumber: number;
-};
+import AdvocateTableHeader from './components/AdvocateTableHeader';
+import AdvocateTableBody from './components/AdvocateTableBody';
+import AdvocateSearchBar from './components/AdvocateSearchBar';
 
 export default function Home() {
 	const [advocates, setAdvocates] = useState<Advocate[]>([]);
@@ -26,31 +19,36 @@ export default function Home() {
 		});
 	}, []);
 
-	const onChange = (e) => {
-		const searchTerm = e.target.value;
-
-		const searchTermElement = document.getElementById('search-term');
-		if (searchTermElement) {
-			searchTermElement.innerHTML = searchTerm;
+	const handleFilteredSearch = (searchTerm: string) => {
+		if (!searchTerm) {
+			handleResetFilteredSearch();
+			return;
 		}
 
-		console.log('filtering advocates...');
+    console.log(
+			`Filtering list of advocates by search term ${searchTerm}...`
+		);
+    
 		const filteredAdvocates = advocates.filter((advocate) => {
 			return (
-				advocate.firstName.includes(searchTerm) ||
-				advocate.lastName.includes(searchTerm) ||
-				advocate.city.includes(searchTerm) ||
-				advocate.degree.includes(searchTerm) ||
-				advocate.specialties.includes(searchTerm) ||
-				advocate.yearsOfExperience.toString().includes(searchTerm)
+				valueHasSearchTerm(advocate.firstName, searchTerm) ||
+				valueHasSearchTerm(advocate.lastName, searchTerm) ||
+				valueHasSearchTerm(advocate.city, searchTerm) ||
+				valueHasSearchTerm(advocate.degree, searchTerm) ||
+				valueHasSearchTerm(advocate.specialties.join(', '), searchTerm) ||
+				valueHasSearchTerm(advocate.yearsOfExperience.toString(), searchTerm)
 			);
 		});
 
 		setFilteredAdvocates(filteredAdvocates);
 	};
 
-	const onClick = () => {
-		console.log(advocates);
+  const valueHasSearchTerm = (value: string, searchTerm: string) => {
+    return value.toLowerCase().includes(searchTerm.trim().toLowerCase());
+  };
+
+	const handleResetFilteredSearch = () => {
+		console.log('Reseting list of advocates...');
 		setFilteredAdvocates(advocates);
 	};
 
@@ -59,50 +57,15 @@ export default function Home() {
 			<h1>Solace Advocates</h1>
 			<br />
 			<br />
-			<div>
-				<p>Search</p>
-				<p>
-					Searching for: <span id='search-term'></span>
-				</p>
-				<input
-					style={{ border: '1px solid black' }}
-					onChange={onChange}
-				/>
-				<button onClick={onClick}>Reset Search</button>
-			</div>
+			<AdvocateSearchBar
+				onChange={handleFilteredSearch}
+				onReset={handleResetFilteredSearch}
+			/>
 			<br />
 			<br />
 			<table>
-				<thead>
-          <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>City</th>
-            <th>Degree</th>
-            <th>Specialties</th>
-            <th>Years of Experience</th>
-            <th>Phone Number</th>
-          </tr>
-				</thead>
-				<tbody>
-					{filteredAdvocates.map((advocate, index) => {
-						return (
-							<tr key={`${advocate.firstName}-${advocate.lastName}-${index}`}>
-								<td>{advocate.firstName}</td>
-								<td>{advocate.lastName}</td>
-								<td>{advocate.city}</td>
-								<td>{advocate.degree}</td>
-								<td>
-									{advocate.specialties.map((specialty, index) => (
-										<div key={index}>{specialty}</div>
-									))}
-								</td>
-								<td>{advocate.yearsOfExperience}</td>
-								<td>{advocate.phoneNumber}</td>
-							</tr>
-						);
-					})}
-				</tbody>
+				<AdvocateTableHeader />
+				<AdvocateTableBody rows={filteredAdvocates} />
 			</table>
 		</main>
 	);
