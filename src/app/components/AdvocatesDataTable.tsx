@@ -2,6 +2,8 @@ import * as React from 'react';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
 import Box from '@mui/material/Box';
 import phoneNumberFormatter from '../utils/phoneNumberFormatter';
+import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const columns: GridColDef<Advocate>[] = [
 	{ field: 'firstName', headerName: 'First name', width: 100 },
@@ -38,15 +40,21 @@ interface AdvocateTableRows {
 
 export default function AdvocatesDataTable({ rows }: AdvocateTableRows) {
 	return (
-		<Box sx={{ height: '100%', width: '100%' }}>
-			<DataGrid
-				rows={rows}
-				columns={columns}
-				initialState={{ pagination: { paginationModel } }}
-				pageSizeOptions={[10, 20, 50]}
-				checkboxSelection
-				sx={{ border: 1, borderColor: 'divider' }}
-			/>
+		<Box style={{ height: '100%', width: '100%' }}>
+			{rows.length > 0 ? (
+				<DataGrid
+					rows={rows}
+					columns={columns}
+					initialState={{ pagination: { paginationModel } }}
+					pageSizeOptions={[10, 20, 50]}
+					checkboxSelection
+					sx={{ border: 1, borderColor: 'divider' }}
+				/>
+			) : (
+				<Typography variant='h4' component='h2'>
+					Loading advocates... <CircularProgress />
+				</Typography>
+			)}
 		</Box>
 	);
 }
