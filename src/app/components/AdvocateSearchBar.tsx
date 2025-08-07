@@ -11,17 +11,19 @@ export default function AdvocateSearchBar({ onChange, onReset }: AdvocateSearchB
 
     const handleInputChange = (event) => {
         const searchValue = event.target.value;
-        setSearchTerm(searchValue);
-        onChange(searchValue);
-    };
-    const handleInputReset = () => {
-        setSearchTerm('');
-        onReset();
+
+        if (searchValue) {
+            setSearchTerm(searchValue);
+            onChange(searchValue);
+        } else {
+            setSearchTerm('');
+            onReset();
+        }
     };
 
 	return (
 		<div>
-			<label htmlFor='search-input'>Search</label>
+			<label htmlFor='search-input'>Filtered Search</label>
 			<br />
 			<input
 				style={{ border: '1px solid black' }}
@@ -32,7 +34,7 @@ export default function AdvocateSearchBar({ onChange, onReset }: AdvocateSearchB
 				value={searchTerm}
 				onChange={handleInputChange}
 			/>
-			<button onClick={handleInputReset}>Clear</button>
+			<button onClick={onReset}>Clear</button>
 		</div>
 	);
 }
