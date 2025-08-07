@@ -4,58 +4,29 @@ import { useEffect, useState } from 'react';
 import AdvocateTableHeader from './components/AdvocateTableHeader';
 import AdvocateTableBody from './components/AdvocateTableBody';
 import AdvocateSearchBar from './components/AdvocateSearchBar';
+import fetchAdvocates from './utils/fetchAdvocates';
+import searchAdvocates from './utils/searchAdvocates';
 
 export default function Home() {
 	const [advocates, setAdvocates] = useState<Advocate[]>([]);
 	const [filteredAdvocates, setFilteredAdvocates] = useState<Advocate[]>([]);
 
-  useEffect(() => {
-    const fetchAdvocates = async () => {
-      try {
-        console.log('fetching advocates...');
-        const response = await fetch('/api/advocates');
-        if (!response.ok) {
-          throw new Error('Failed to fetch advocates');
-        }
-
-        const jsonResponse = await response.json();
-        setAdvocates(jsonResponse.data);
-        setFilteredAdvocates(jsonResponse.data);
-        
-      } catch (error) {
-        console.error('Error fetching advocates:', error);
-      }
-    };
-    fetchAdvocates();
-  }, []);
+	useEffect(() => {
+		const loadPageData = async () => {
+			const listOfAdvocates = await fetchAdvocates();
+			setAdvocates(listOfAdvocates);
+			setFilteredAdvocates(listOfAdvocates);
+		};
+		loadPageData();
+	}, []);
 
 	const handleFilteredSearch = (searchTerm: string) => {
-		if (!searchTerm) {
-			handleResetFilteredSearch();
-			return;
-		}
-
-    console.log(
-			`Filtering list of advocates by search term ${searchTerm}...`
+		console.log(
+			`Filtering list of advocates by search term "${searchTerm}"...`
 		);
-    
-		const filteredAdvocates = advocates.filter((advocate) => {
-			return (
-				valueHasSearchTerm(advocate.firstName, searchTerm) ||
-				valueHasSearchTerm(advocate.lastName, searchTerm) ||
-				valueHasSearchTerm(advocate.city, searchTerm) ||
-				valueHasSearchTerm(advocate.degree, searchTerm) ||
-				valueHasSearchTerm(advocate.specialties.join(', '), searchTerm) ||
-				valueHasSearchTerm(advocate.yearsOfExperience.toString(), searchTerm)
-			);
-		});
-
+		const filteredAdvocates = searchAdvocates(advocates, searchTerm);
 		setFilteredAdvocates(filteredAdvocates);
 	};
-
-  const valueHasSearchTerm = (value: string, searchTerm: string) => {
-    return value.toLowerCase().includes(searchTerm.trim().toLowerCase());
-  };
 
 	const handleResetFilteredSearch = () => {
 		console.log('Reseting list of advocates...');
